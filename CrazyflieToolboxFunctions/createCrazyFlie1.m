@@ -160,21 +160,21 @@ if ~isempty(tag)
 end
 
 %% load body stl file(s)
-pathname = 'STL Files, CrazyFlie';
+pathname = 'SimulationComponents, CrazyFlie1.0';
 switch complexity
     case 'Simple'
         body_stl = sprintf('CrazyFlie_%s.fig',resolution);
         
         %[cf,stltitle] = stlpatch( fullfile(pathname,body_stl) );
         %body = patch(cf);
-        open( fullfile(folderName,body_stl) );
-        fig = gcf;
-        set(fig,'Visible','off');
-        axs = get(fig,'Children');
-        body = get(axs,'Children');
+        open( fullfile(pathname,body_stl) );
+        tmpfig = gcf;
+        set(tmpfig,'Visible','off');
+        tmpaxs = get(tmpfig,'Children');
+        body = get(tmpaxs,'Children');
                         
         set(body,'Parent',h,'FaceColor',[0.7,0.7,0.7],'Tag','Body');
-        close(fig)
+        close(tmpfig)
     case 'Complex'
         components = {...
             'CF_ContactStrip-1';...
@@ -231,32 +231,42 @@ switch complexity
             filename = sprintf('CrazyFlie_%s - %s.fig',resolution,components{i});
             %[cf,stltitle] = stlpatch( fullfile(pathname,filename) );
             %cmpnt = patch(cf);
-            open( fullfile(folderName,body_stl) );
-            fig = gcf;
-            set(fig,'Visible','off');
-            axs = get(fig,'Children');
-            cmpnt = get(axs,'Children');
+            open( fullfile(pathname,filename) );
+            tmpfig = gcf;
+            set(tmpfig,'Visible','off');
+            tmpaxs = get(tmpfig,'Children');
+            cmpnt = get(tmpaxs,'Children');
         
             set(cmpnt,'Parent',h,'FaceColor',component_color(i,:),...
                 'FaceAlpha',component_alpha(i,:),'Tag',components{i});
             
-            close(fig);
+            close(tmpfig);
         end
     otherwise
         error('Unexpected value for "complexity" parameter.');
 end
 
 %% load prop stl files
-cw_stl = sprintf('CF_CW_Propeller_%s.fig',resolution);
 ccw_stl = sprintf('CF_CCW_Propeller_%s.fig',resolution);
+open( fullfile(pathname,ccw_stl) );
+tmpfig = gcf;
+set(tmpfig,'Visible','off');
+tmpaxs = get(tmpfig,'Children');
+m(1) = get(tmpaxs,'Children');
+set(m(1),'Parent',axs);
+close(tmpfig)
 
-%[cw,stltitle] = stlpatch( fullfile(pathname,cw_stl) );
-%[ccw,stltitle] = stlpatch( fullfile(pathname,ccw_stl) );
+cw_stl  = sprintf('CF_CW_Propeller_%s.fig',resolution);
+open( fullfile(pathname,cw_stl) );
+tmpfig = gcf;
+set(tmpfig,'Visible','off');
+tmpaxs = get(tmpfig,'Children');
+m(2) = get(tmpaxs,'Children');
+set(m(2),'Parent',axs);
+close(tmpfig)
 
-%m(1) = patch(ccw);
-%m(2) = patch(cw);
-%m(3) = patch(ccw);
-%m(4) = patch(cw);
+m(3) = copyobj(m(1),axs);
+m(4) = copyobj(m(2),axs);
 
 offset = ...
     [ 43.00,  0.00,  7.90;...
